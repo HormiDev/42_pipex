@@ -1,3 +1,4 @@
 [submodule "42_Libft"]
 	path = 42_Libft
 	url = https://github.com/HormiDev/42_Libft.git
+	fetchRecurseSubmodules = on-demand
