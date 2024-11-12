@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/10 21:22:21 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/11/12 19:10:00 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	ft_ckeck_cmd(char **cmd, char **path_dirs)
 {
-	int i;
-	char *path;
-	
+	int		i;
+	char	*path;
+
 	i = 0;
 	while (path_dirs[i])
 	{
@@ -34,19 +34,19 @@ int	ft_ckeck_cmd(char **cmd, char **path_dirs)
 
 void	ft_check_cmds(t_pipex *pipex)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	while (pipex->cmds[i])
 	{
 		if (!ft_ckeck_cmd(pipex->cmds[i], pipex->path_dirs))
-			{
-				ft_putstr_fd("\033[0;31mError\n\033[0;33mCommand not found: ", 2);
-				ft_putstr_fd(pipex->cmds[i][0], 2);
-				ft_putstr_fd("\033[0m\n", 2);
-				ft_alloc_lst(0, 0);
-				exit(1);
-			}
+		{
+			ft_putstr_fd("\033[0;31mError\n\033[0;33mCommand not found: ", 2);
+			ft_putstr_fd(pipex->cmds[i][0], 2);
+			ft_putstr_fd("\033[0m\n", 2);
+			ft_alloc_lst(0, 0);
+			exit(1);
+		}
 		i++;
 	}
 }
@@ -54,7 +54,7 @@ void	ft_check_cmds(t_pipex *pipex)
 void	ft_parsing_path(t_pipex *pipex, char **envp)
 {
 	char	*path;
-	
+
 	while (*envp)
 	{
 		if (ft_strncmp(*envp, "PATH=", 5) == 0)
@@ -71,7 +71,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 {
 	t_pipex	*pipex;
 	int		i_cmd;
-	
+
 	pipex = (t_pipex *)ft_alloc_lst(sizeof(t_pipex), 4);
 	pipex->infile = argv[1];
 	pipex->cmds = (char ***)ft_alloc_lst((argc - 3) + 1 * sizeof(char **), 4);
@@ -87,11 +87,11 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	return (pipex);
 }
 
-void ft_print_pipex(t_pipex *pipex)
+void	ft_print_pipex(t_pipex *pipex)
 {
-	int i;
-	int j;
-	
+	int	i;
+	int	j;
+
 	ft_printf("%s ", pipex->infile);
 	i = 0;
 	while (pipex->cmds[i])
