@@ -24,8 +24,10 @@ void	ft_executions(t_pipex *pipex)
 	int		cmd;
 	int		infile_fd;
 	int		outfile_fd;
+	int		i;
 
 	cmd = 0;
+	i = 0;
 	infile_fd = open(pipex->infile, O_RDONLY); // Abrir el archivo de entrada
 	if (infile_fd < 0)
 	{
@@ -83,9 +85,17 @@ void	ft_executions(t_pipex *pipex)
 			if (cmd > 0)
 				close(pipex->pipe_fd[0]);
 			pipex->pipe_fd[0] = fd[0];
-			waitpid(pid, 0, 0);
+			//waitpid(pid, 0, 0);
 			cmd++;
+			i++;
+			if (i >= 2)
+				while (i > 0)
+				{
+					wait(NULL);
+					i--;
+				}
 		}
+		
 	}
 	close(infile_fd);
 }
