@@ -88,7 +88,7 @@ void	ft_executions(t_pipex *pipex)
 			//waitpid(pid, 0, 0);
 			cmd++;
 			i++;
-			if (i >= 2)
+			if (i >= pipex->n_cmds)
 				while (i > 0)
 				{
 					wait(NULL);
