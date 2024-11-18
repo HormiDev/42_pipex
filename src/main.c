@@ -17,7 +17,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-void	ft_executions(t_pipex *pipex)
+int	ft_executions(t_pipex *pipex)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -25,6 +25,7 @@ void	ft_executions(t_pipex *pipex)
 	int		infile_fd;
 	int		outfile_fd;
 	int		i;
+	int		last_exit_status;
 
 	cmd = 0;
 	i = 0;
@@ -32,20 +33,20 @@ void	ft_executions(t_pipex *pipex)
 	if (infile_fd < 0)
 	{
 		ft_putstr_fd("Error al abrir el archivo de entrada", 2);
-		exit(EXIT_FAILURE);
+		exit(127);
 	}
 	while (pipex->cmds[cmd])
 	{
 		if (pipe(fd) == -1)
 		{
 			ft_putstr_fd("pipe", 2);
-			exit(EXIT_FAILURE);
+			exit(127);
 		}
 		pid = fork();
 		if (pid == -1)
 		{
 			ft_putstr_fd("fork", 2);
-			exit(EXIT_FAILURE);
+			exit(127);
 		}
 		if (pid == 0)
 		{
@@ -65,7 +66,7 @@ void	ft_executions(t_pipex *pipex)
 				if (outfile_fd < 0)
 				{
 					ft_putstr_fd("Error al abrir el archivo de salida", 2);
-					exit(EXIT_FAILURE);
+					exit(127);
 				}
 				dup2(outfile_fd, 1);
 				close(outfile_fd);
@@ -93,18 +94,20 @@ void	ft_executions(t_pipex *pipex)
 			if (i >= pipex->n_cmds)
 				while (i > 0)
 				{
-					wait(NULL);
+					wait(&last_exit_status);
 					i--;
 				}
 		}
 		
 	}
 	close(infile_fd);
+	return (last_exit_status);
 }
 
 int	main(int argc, char **argv, char **envp)
 {
 	t_pipex	*pipex;
+	int		exit_status;
 
 	if (argc != 5)
 	{
@@ -113,7 +116,7 @@ int	main(int argc, char **argv, char **envp)
 		return (1);
 	}
 	pipex = ft_parsing_pipex(argc, argv, envp);
-	ft_executions(pipex);
+	exit_status = ft_executions(pipex);
 	ft_alloc_lst(0, 0);
-	return 0;
+	exit (exit_status);
 }
