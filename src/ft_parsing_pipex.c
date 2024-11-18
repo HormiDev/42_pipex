@@ -6,13 +6,13 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/16 19:44:54 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/11/18 02:12:58 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int	ft_ckeck_cmd(char **cmd, char **path_dirs)
+void	ft_parsing_cmd(char **cmd, char **path_dirs)
 {
 	int		i;
 	char	*path;
@@ -23,32 +23,19 @@ int	ft_ckeck_cmd(char **cmd, char **path_dirs)
 		path = ft_strjoin_ae(path_dirs[i], "/");
 		path = ft_strjoin_ae(path, cmd[0]);
 		if (access(path, X_OK) == 0)
-		{
 			cmd[0] = path;
-			return (1);
-		}
 		i++;
 	}
-	if (access(cmd[0], X_OK) == 0)
-		return (1);
-	return (0);
 }
 
-void	ft_check_cmds(t_pipex *pipex)
+void	ft_parsing_cmds(t_pipex *pipex)
 {
 	int	i;
 
 	i = 0;
 	while (pipex->cmds[i])
 	{
-		if (!ft_ckeck_cmd(pipex->cmds[i], pipex->path_dirs))
-		{
-			ft_putstr_fd("\033[0;31mError\n\033[0;33mCommand not found: ", 2);
-			ft_putstr_fd(pipex->cmds[i][0], 2);
-			ft_putstr_fd("\033[0m\n", 2);
-			ft_alloc_lst(0, 0);
-			exit(1);
-		}
+		ft_parsing_cmd(pipex->cmds[i], pipex->path_dirs);
 		i++;
 	}
 }
@@ -86,7 +73,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	}
 	pipex->outfile = argv[4];
 	ft_parsing_path(pipex, envp);
-	ft_check_cmds(pipex);
+	ft_parsing_cmds(pipex);
 	return (pipex);
 }
 

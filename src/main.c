@@ -76,7 +76,9 @@ void	ft_executions(t_pipex *pipex)
 				close(fd[1]);
 			}
 			execve(pipex->cmds[cmd][0], pipex->cmds[cmd], 0);
-			ft_putstr_fd("Error al ejecutar el comando", 2);
+			ft_putstr_fd("\033[0;33mcommand not found: ", 2);
+			ft_putstr_fd(pipex->cmds[cmd][0], 2);
+			ft_putstr_fd("\033[0m\n", 2);
 			exit(EXIT_FAILURE);
 		}
 		else
