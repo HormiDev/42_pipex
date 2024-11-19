@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2024/11/08 00:18:32 by ide-dieg         ###   ########.fr        #
+#    Updated: 2024/11/18 23:47:53 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,6 +20,8 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 
 LIBSA = 42_Libft/libft.a \
+
+all: build
 
 build: ide-dieg pipex_title update_submodules build_libft
 	@if [ ! -f $(NAME) ]; then \
