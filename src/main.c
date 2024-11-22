@@ -1,13 +1,13 @@
 /* ************************************************************************** */
-/*																			*/
-/*														:::	  ::::::::   */
-/*   main.c											 :+:	  :+:	:+:   */
-/*													+:+ +:+		 +:+	 */
-/*   By: ide-dieg <ide-dieg@student.42madrid>	   +#+  +:+	   +#+		*/
-/*												+#+#+#+#+#+   +#+		   */
-/*   Created: 2024/11/07 18:08:52 by ide-dieg		  #+#	#+#			 */
-/*   Updated: 2024/11/12 18:41:52 by ide-dieg		 ###   ########.fr	   */
-/*																			*/
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/20 15:29:55 by ide-dieg          #+#    #+#             */
+/*   Updated: 2024/11/21 22:08:08 by ide-dieg         ###   ########.fr       */
+/*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
@@ -32,6 +32,7 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	cmd = 0;
 	i = 0;
 	infile_fd = open(pipex->infile, O_RDONLY); // Abrir el archivo de entrada
+	outfile_fd = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644); // Abrir el archivo de salida
 	if (infile_fd < 0)
 		infile_fd = 0;
 	while (pipex->cmds[cmd])
@@ -53,15 +54,20 @@ void	ft_executions(t_pipex *pipex, char **envp)
 			{ // Primer comando: redirigir la entrada desde infile
 				dup2(infile_fd, 0);
 				close(infile_fd);
+				dup2(fd[1], 1);
+				close(fd[1]);
+				close(fd[0]);
 			}
 			else
 			{ // Comandos intermedios: redirigir la entrada desde la tubería anterior
 				dup2(pipex->pipe_fd[0], 0);
 				close(pipex->pipe_fd[0]);
+				dup2(fd[1], 1);
+				close(fd[1]);
+				close(fd[0]);
 			}
 			if (pipex->cmds[cmd + 1] == 0)
 			{ // Último comando: redirigir la salida a outfile
-				outfile_fd = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (outfile_fd < 0)
 				{
 					ft_putstr_fd("Error al abrir el archivo de salida", 2);
@@ -90,15 +96,22 @@ void	ft_executions(t_pipex *pipex, char **envp)
 			//waitpid(pid, 0, 0);
 			cmd++;
 			i++;
-			if (i >= pipex->n_cmds)
-				while (i > 0)
-				{
-					if(wait(&exit_status) == pid)
-						last_exit_cmd_status = exit_status;
-					i--;
-				}
 		}
 		
+	}
+	while (i > 0)
+	{
+		if(wait(&exit_status) == pid)
+		{
+			last_exit_cmd_status = exit_status;
+			close(infile_fd);
+			close(pipex->pipe_fd[0]);
+			close(pipex->pipe_fd[1]);
+			close(outfile_fd);
+			close(fd[0]);
+			close(fd[1]);
+		}
+		i--;
 	}
 	close(infile_fd);
 	if (WIFEXITED(last_exit_cmd_status))
