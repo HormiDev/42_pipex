@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:29:55 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/23 03:42:24 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/11/27 00:41:55 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,11 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	}
 	if (pid2 == 0)
 	{
+		if (outfile_fd < 0)
+		{
+			ft_putstr_fd("Error al abrir el archivo de salida\n", 2);
+			exit(1);
+		}
 		dup2(pipex->pipe_fd[0], 0);
 		dup2(outfile_fd, 1);
 		close(pipex->pipe_fd[0]);
