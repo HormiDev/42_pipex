@@ -6,3 +6,10 @@ pipex
 !.gitignore
 infile
 outfile
+infile
+outfile
+cmpoutfile
+errorfile
+cmperrorfile
+traces
+testfile
