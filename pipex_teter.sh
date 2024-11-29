@@ -36,9 +36,9 @@ create_infile() {
 delete_files() {
 	rm -f infile
 	rm -f outfile
-	rm -f cmpoutfile
+	rm -f shelloutfile
 	rm -f errorfile
-	rm -f cmperrorfile
+	rm -f shellerrorfile
 	rm -f testfile
 }
 
@@ -93,7 +93,7 @@ test_pipex() {
 
 	delete_files
 
-	(< $infile $cmd1 | $cmd2 > cmpoutfile) 2> cmperrorfile
+	(< $infile $cmd1 | $cmd2 > shelloutfile) 2> shellerrorfile
 	cmpstatus=$?
 
 	./pipex "$infile" "$cmd1" "$cmd2" "$outfile" 2> errorfile
@@ -101,20 +101,30 @@ test_pipex() {
 	
 	if [ $status -ne $cmpstatus ]; then
 		ok=false
+		echo "" >> traces
+		echo "test $test_name" >> traces
+		echo "./pipex $infile $cmd1 $cmd2 $outfile" >> traces
 		echo "test $test_name" >> traces
 		echo "expected exit status $cmpstatus" >> traces
 		echo "got exit status $status" >> traces
 	fi
 
-	if ! cmp -s outfile cmpoutfile; then
+	if ! cmp -s "outfile" "shelloutfile"; then
 		ok=false
 		echo "" >> traces
 		echo "test $test_name" >> traces
-		echo "expected output:" >> traces
-		cat cmpoutfile >> traces
-		echo "got output:" >> traces
-		cat "$outfile" >> traces
+		echo "./pipex $infile $cmd1 $cmd2 $outfile" >> traces
+		echo "diferences outfile <	> shelloutfile" >> traces
+		diff -y --suppress-common-lines outfile shelloutfile >> traces
+	fi
+
+	if ! cmp -s "errorfile" "shellerrorfile"; then
+		ok=false
 		echo "" >> traces
+		echo "test $test_name" >> traces
+		echo "./pipex $infile $cmd1 $cmd2 $outfile" >> traces
+		echo "diferences errorfile <	> shellerrorfile" >> traces
+		diff -y --suppress-common-lines errorfile shellerrorfile >> traces
 	fi
 
 	if [ "$ok" = true ]; then
@@ -122,7 +132,7 @@ test_pipex() {
 	else
 		echo -en "${RED}1.KO ${NC}"
 	fi
-
+	delete_files
 }
 
 test_2() {
@@ -151,7 +161,16 @@ touch traces
 
 test_1
 test_2
-test_pipex "3" "nnfile" "ls" "ls" "outfile"
+test_pipex "3" "infile" "ls" "ls" "outfile"
 echo
 
-cat traces
+if [ -e traces ]; then
+	echo -e "${ORANGE}
+Traces:"
+	cat traces
+	echo -e "${NC}"
+else
+	echo -e "${GREEN}All tests passed${NC}"
+fi
+delete_files
+rm -f traces

@@ -8,8 +8,8 @@ infile
 outfile
 infile
 outfile
-cmpoutfile
+shelloutfile
 errorfile
-cmperrorfile
+shellerrorfile
 traces
 testfile

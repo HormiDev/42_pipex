@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/18 02:12:58 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/11/29 22:30:05 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	ft_parsing_path(t_pipex *pipex, char **envp)
 {
 	char	*path;
 
-	while (*envp)
+	while (envp && *envp)
 	{
 		if (ft_strncmp(*envp, "PATH=", 5) == 0)
 		{
