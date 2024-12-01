@@ -128,11 +128,11 @@ test_pipex() {
 	fi
 
 	if [ "$ok" = true ]; then
-		echo -en "${GREEN}1.OK ${NC}"
+		echo -en "${GREEN}$test_name.OK ${NC}"
 	else
-		echo -en "${RED}1.KO ${NC}"
+		echo -en "${RED}$test_name.KO ${NC}"
 	fi
-	delete_files
+
 }
 
 test_2() {
@@ -160,8 +160,9 @@ rm -f traces
 touch traces
 
 test_1
-test_2
+test_pipex "2" "noexiste" "grep hello" "wc" "outfile"
 test_pipex "3" "infile" "ls" "ls" "outfile"
+test_pipex "4"  infile "grep hello" "wc" "outfile"
 echo
 
 if [ -e traces ]; then
@@ -172,5 +173,5 @@ Traces:"
 else
 	echo -e "${GREEN}All tests passed${NC}"
 fi
-delete_files
+
 rm -f traces
