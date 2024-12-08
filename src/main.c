@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 15:29:55 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/27 01:20:22 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/12/08 21:42:39 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <errno.h>
+#include <string.h>
 /*
 void	ft_executions(t_pipex *pipex, char **envp)
 {
@@ -130,7 +132,17 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	int		last_exit_cmd_status;
 	
 	infile_fd = open(pipex->infile, O_RDONLY);
+	if (infile_fd < 0)
+	{
+		perror(pipex->infile);
+		strerror(errno);
+	}
 	outfile_fd = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfile_fd < 0)
+	{
+		perror(pipex->outfile);
+		strerror(errno);
+	}
 	pipe(pipex->pipe_fd);
 	pid1 = fork();
 	if (pid1 < 0)
@@ -141,10 +153,7 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	if (pid1 == 0)
 	{
 		if (infile_fd < 0)
-		{
-			ft_putstr_fd("Error al abrir el archivo de entrada\n", 2);
 			exit(127);
-		}
 		dup2(infile_fd, 0);
 		dup2(pipex->pipe_fd[1], 1);
 		close(infile_fd);
@@ -165,10 +174,7 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	if (pid2 == 0)
 	{
 		if (outfile_fd < 0)
-		{
-			perror("Error al abrir el archivo de salida");
 			exit(1);
-		}
 		dup2(pipex->pipe_fd[0], 0);
 		dup2(outfile_fd, 1);
 		close(pipex->pipe_fd[0]);

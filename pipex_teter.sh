@@ -135,34 +135,16 @@ test_pipex() {
 
 }
 
-test_2() {
-	ok=true
-
-	rm -f outfile
-	./pipex noexiste "grep hello" "wc" outfile > testfile 2>&1
-	status=$?
-	if [ ! -e "outfile" ]; then
-		ok=false
-	fi
-
-	if [ "$ok" = true ]; then
-		echo -en "${GREEN}2.OK ${NC}"
-	else
-		echo -en "${RED}2.KO ${NC}"
-	fi
-}
-
-
-
 print_header
 
+mkdir -p tests
 rm -f traces
 touch traces
 
 test_1
 test_pipex "2" "noexiste" "grep hello" "wc" "outfile"
 test_pipex "3" "infile" "ls" "ls" "outfile"
-test_pipex "4"  infile "grep hello" "wc" "outfile"
+test_pipex "4" "infile" "grep hello" "wc" "outfile"
 echo
 
 if [ -e traces ]; then
