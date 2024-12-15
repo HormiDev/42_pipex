@@ -34,7 +34,6 @@ create_infile() {
 }
 
 delete_files() {
-	rm -f infile
 	rm -f outfile
 	rm -f shelloutfile
 	rm -f errorfile
@@ -92,9 +91,9 @@ test_pipex() {
 	ok=true
 
 	delete_files
-
 	(< $infile $cmd1 | $cmd2 > shelloutfile) 2> shellerrorfile
 	cmpstatus=$?
+	sed -i 's|\.\/pipex_teter\.sh: line [0-9]\+: ||g' shellerrorfile
 
 	./pipex "$infile" "$cmd1" "$cmd2" "$outfile" 2> errorfile
 	status=$?
@@ -109,13 +108,15 @@ test_pipex() {
 		echo "got exit status $status" >> traces
 	fi
 
-	if ! cmp -s "outfile" "shelloutfile"; then
-		ok=false
-		echo "" >> traces
-		echo "test $test_name" >> traces
-		echo "./pipex $infile $cmd1 $cmd2 $outfile" >> traces
-		echo "diferences outfile <	> shelloutfile" >> traces
-		diff -y --suppress-common-lines outfile shelloutfile >> traces
+	if [ -f "outfile" ] && [ -f "shelloutfile" ]; then
+		if ! cmp -s "outfile" "shelloutfile"; then
+			ok=false
+			echo "" >> traces
+			echo "test $test_name" >> traces
+			echo "./pipex $infile $cmd1 $cmd2 $outfile" >> traces
+			echo "diferences outfile <	> shelloutfile" >> traces
+			diff -y --suppress-common-lines outfile shelloutfile >> traces
+		fi
 	fi
 
 	if ! cmp -s "errorfile" "shellerrorfile"; then
@@ -132,19 +133,21 @@ test_pipex() {
 	else
 		echo -en "${RED}$test_name.KO ${NC}"
 	fi
-
+	delete_files
 }
 
 print_header
 
-mkdir -p tests
 rm -f traces
-touch traces
 
 test_1
 test_pipex "2" "noexiste" "grep hello" "wc" "outfile"
-test_pipex "3" "infile" "ls" "ls" "outfile"
+create_infile
+test_pipex "3" "infile" "ls ../" "ls ../" "outfile"
 test_pipex "4" "infile" "grep hello" "wc" "outfile"
+test_pipex "5" "noexiste" "grep hello" "wc" "outfile"
+test_pipex "6" "infile" "ls" "ls" "noexiste/noexiste"
+rm -f infile
 echo
 
 if [ -e traces ]; then
@@ -153,7 +156,10 @@ Traces:"
 	cat traces
 	echo -e "${NC}"
 else
-	echo -e "${GREEN}All tests passed${NC}"
+	echo -e "${GREEN}
+All tests passed${NC}"
 fi
 
 rm -f traces
+
+# ./pipex Makefile "awk '{ print$1 }'" "wc" outfile

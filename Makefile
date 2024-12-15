@@ -6,14 +6,16 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2024/11/18 23:47:53 by ide-dieg         ###   ########.fr        #
+#    Updated: 2024/12/14 18:56:39 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
 SRC =	src/main.c \
+		src/ft_execution.c \
 		src/ft_parsing_pipex.c \
+		src/fts_files.c \
 
 CC = cc
 

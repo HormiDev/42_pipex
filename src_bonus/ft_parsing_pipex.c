@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/29 22:30:05 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/12/14 03:11:53 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,15 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	pipex->infile = argv[1];
 	pipex->cmds = (char ***)ft_alloc_lst((argc - 3) + 1 * sizeof(char **), 4);
 	pipex->n_cmds = argc - 3;
-	i_cmd = 2;
+	pipex->pipe_fd = (int **)ft_alloc_lst(sizeof(int *) * (pipex->n_cmds-1), 4);
+	i_cmd = 0;
+	while (i_cmd < pipex->n_cmds - 1)
+	{
+		pipex->pipe_fd[i_cmd] = (int *)ft_alloc_lst(sizeof(int) * 2, 4);
+		pipe(pipex->pipe_fd[i_cmd]);
+		i_cmd++;
+	}
+	i_cmd = pipex->n_cmds;
 	while (i_cmd <= argc - 2)
 	{
 		pipex->cmds[i_cmd - 2] = ft_split_ae(argv[i_cmd], ' ');
