@@ -6,13 +6,13 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/12/19 21:13:54 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/12/19 21:50:30 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_pid_1(t_pipex *pipex, char **envp)
+void	ft_pid_start(t_pipex *pipex, char **envp)
 {
 	if (pipex->io_fd[0] < 0)
 		exit(127);
@@ -26,7 +26,7 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 	exit(127);
 }
 
-void	ft_pid_2(t_pipex *pipex, char **envp)
+void	ft_pid_end(t_pipex *pipex, char **envp)
 {
 	if (pipex->io_fd[1] < 0)
 		exit(1);

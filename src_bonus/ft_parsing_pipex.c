@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/12/14 03:11:53 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2024/12/19 23:46:37 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,22 +60,21 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 {
 	t_pipex	*pipex;
 	int		i_cmd;
+	int		*fds;
 
 	pipex = (t_pipex *)ft_alloc_lst(sizeof(t_pipex), 4);
 	pipex->infile = argv[1];
 	pipex->cmds = (char ***)ft_alloc_lst((argc - 3) + 1 * sizeof(char **), 4);
 	pipex->n_cmds = argc - 3;
-	pipex->pipe_fd = (int **)ft_alloc_lst(sizeof(int *) * (pipex->n_cmds-1), 4);
-	i_cmd = 0;
-	while (i_cmd < pipex->n_cmds - 1)
-	{
-		pipex->pipe_fd[i_cmd] = (int *)ft_alloc_lst(sizeof(int) * 2, 4);
-		pipe(pipex->pipe_fd[i_cmd]);
-		i_cmd++;
-	}
-	i_cmd = pipex->n_cmds;
+	i_cmd = 2;
 	while (i_cmd <= argc - 2)
 	{
+		if (i_cmd <= argc)
+		{
+			fds = (int *)ft_alloc_lst(2 * sizeof(int), 4);
+			pipe(fds);
+			ft_lstadd_back(&pipex->pipes_fds, ft_lstnew_a(fds));
+		}
 		pipex->cmds[i_cmd - 2] = ft_split_ae(argv[i_cmd], ' ');
 		i_cmd++;
 	}

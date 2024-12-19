@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2024/12/14 18:56:39 by ide-dieg         ###   ########.fr        #
+#    Updated: 2024/12/19 21:15:24 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,9 +23,9 @@ CFLAGS = -Wall -Wextra -Werror
 
 LIBSA = 42_Libft/libft.a \
 
-all: build
+all: $(NAME)
 
-build: ide-dieg pipex_title update_submodules build_libft
+$(NAME): ide-dieg pipex_title update_submodules build_libft
 	@if [ ! -f $(NAME) ]; then \
 		echo "$(NARANJA)Building $(NAME)...$(NC)"; \
 		$(CC) $(CFLAGS) -o $(NAME) $(SRC) $(LIBSA); \
