@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/11/29 22:30:05 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/08 22:38:30 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	i_cmd = 2;
 	while (i_cmd <= argc - 2)
 	{
-		pipex->cmds[i_cmd - 2] = ft_split_ae(argv[i_cmd], ' ');
+		pipex->cmds[i_cmd - 2] = ft_split_quotes(argv[i_cmd]);
 		i_cmd++;
 	}
 	pipex->outfile = argv[4];

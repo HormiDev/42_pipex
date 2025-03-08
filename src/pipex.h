@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 18:14:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/12/14 18:48:35 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/08 22:37:17 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,5 +39,6 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp);
 void	ft_print_pipex(t_pipex *pipex);
 void	ft_openfiles(t_pipex *pipex);
 void	ft_closefiles(t_pipex *pipex);
+char	**ft_split_quotes(char *str);
 
 #endif

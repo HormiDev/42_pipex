@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2024/12/19 21:15:24 by ide-dieg         ###   ########.fr        #
+#    Updated: 2025/03/08 22:38:55 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,6 +16,7 @@ SRC =	src/main.c \
 		src/ft_execution.c \
 		src/ft_parsing_pipex.c \
 		src/fts_files.c \
+		src/ft_split_quotes.c \
 
 CC = cc
 
@@ -38,7 +39,7 @@ fclean: fclean_libft
 	@rm -f $(NAME)
 	@echo "$(NAME) cleaned!"
 
-re: fclean build
+re: fclean $(NAME)
 
 build_libft:
 	@if [ ! -f 42_Libft/libft.a ]; then \
