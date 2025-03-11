@@ -91,12 +91,11 @@ test_pipex() {
 	ok=true
 
 	delete_files
-	(< $infile $cmd1 | $cmd2 > shelloutfile) 2> shellerrorfile
-	cmpstatus=$?
-	sed -i 's|\.\/pipex_teter\.sh: line [0-9]\+: ||g' shellerrorfile
+	output=$( ( < "$infile" $cmd1 | $cmd2 ) 2> shellerrorfile )
+	cmpstatus=$(echo $?);
 
 	./pipex "$infile" "$cmd1" "$cmd2" "$outfile" 2> errorfile
-	status=$?
+	status=$(echo $?);
 	
 	if [ $status -ne $cmpstatus ]; then
 		ok=false
@@ -160,6 +159,5 @@ else
 All tests passed${NC}"
 fi
 
-rm -f traces
 
 # ./pipex Makefile "awk '{ print$1 }'" "wc" outfile

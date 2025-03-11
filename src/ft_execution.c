@@ -6,11 +6,29 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/12/19 21:13:54 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/11 03:26:43 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+/**
+ * @brief funcion que hace exit con el error correspondiente
+ * 
+ * EAACCS = 126 - no tiene permisos de ejecucion
+ * EISDIR = 126 - es un directorio
+ * ENOEXEC = 126 - no es un archivo ejecutable
+ * ETXTBSY = 126 - archivo bloqueado por otro proceso            REVISAR
+ * ENOMEM = 126 - no hay suficiente memoria                      REVISAR
+ * 
+ * 127 - no se encontro el comando
+ */
+void	ft_pid_exit_with_error(void)
+{
+	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
+		exit(126);
+	exit(127);
+}
 
 void	ft_pid_1(t_pipex *pipex, char **envp)
 {
@@ -23,7 +41,7 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 	close(pipex->pipe_fd[1]);
 	execve(pipex->cmds[0][0], pipex->cmds[0], envp);
 	perror(pipex->cmds[0][0]);
-	exit(127);
+	ft_pid_exit_with_error();
 }
 
 void	ft_pid_2(t_pipex *pipex, char **envp)
@@ -37,7 +55,7 @@ void	ft_pid_2(t_pipex *pipex, char **envp)
 	close(pipex->io_fd[1]);
 	execve(pipex->cmds[1][0], pipex->cmds[1], envp);
 	perror(pipex->cmds[1][0]);
-	exit(127);
+	ft_pid_exit_with_error();
 }
 
 void	ft_wait_pids(pid_t pid1, pid_t pid2)
