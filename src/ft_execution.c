@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/14 03:43:42 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/14 04:15:33 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,11 @@ void	ft_wait_pids(pid_t pid1, pid_t pid2)
 
 	waitpid(pid1, &last_exit_cmd_status, 0);
 	waitpid(pid2, &last_exit_cmd_status, 0);
+	if (WIFSIGNALED(last_exit_cmd_status))
+	{
+		ft_alloc_lst(0, 0);
+		exit(128 + WTERMSIG(last_exit_cmd_status));
+	}
 	if (WIFEXITED(last_exit_cmd_status))
 	{
 		ft_alloc_lst(0, 0);
