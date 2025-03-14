@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/11 03:26:43 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/14 03:43:42 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
  * 
  * EAACCS = 126 - no tiene permisos de ejecucion
  * EISDIR = 126 - es un directorio
- * ENOEXEC = 126 - no es un archivo ejecutable
+ * ENOEXEC = 126 - no es un archivo ejecutable o esta corrupto
  * ETXTBSY = 126 - archivo bloqueado por otro proceso            REVISAR
  * ENOMEM = 126 - no hay suficiente memoria                      REVISAR
  * 
@@ -32,7 +32,7 @@ void	ft_pid_exit_with_error(void)
 
 void	ft_pid_1(t_pipex *pipex, char **envp)
 {
-	if (pipex->io_fd[0] < 0)
+	if (pipex->io_fd[0] < 0 || pipex->cmds[0][0] == NULL)
 		exit(127);
 	dup2(pipex->io_fd[0], 0);
 	dup2(pipex->pipe_fd[1], 1);
@@ -48,6 +48,8 @@ void	ft_pid_2(t_pipex *pipex, char **envp)
 {
 	if (pipex->io_fd[1] < 0)
 		exit(1);
+	if (pipex->cmds[1][0] == NULL)
+		exit(127);
 	dup2(pipex->pipe_fd[0], 0);
 	dup2(pipex->io_fd[1], 1);
 	close(pipex->pipe_fd[0]);

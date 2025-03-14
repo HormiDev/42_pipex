@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/08 22:38:30 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/14 03:37:09 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,21 @@ void	ft_parsing_cmd(char **cmd, char **path_dirs)
 	char	*path;
 
 	i = 0;
+	if (path_dirs == NULL)
+		return ;
 	while (path_dirs[i])
 	{
 		path = ft_strjoin_ae(path_dirs[i], "/");
 		path = ft_strjoin_ae(path, cmd[0]);
 		if (access(path, X_OK) == 0)
+		{
 			cmd[0] = path;
+			return ;
+		}
 		i++;
 	}
+	ft_dprintf(2, "%s: command not found\n", *cmd);
+	cmd[0] = NULL;
 }
 
 void	ft_parsing_cmds(t_pipex *pipex)
@@ -35,7 +42,8 @@ void	ft_parsing_cmds(t_pipex *pipex)
 	i = 0;
 	while (pipex->cmds[i])
 	{
-		ft_parsing_cmd(pipex->cmds[i], pipex->path_dirs);
+		if (ft_strchr(pipex->cmds[i][0], '/') == NULL)
+			ft_parsing_cmd(pipex->cmds[i], pipex->path_dirs);
 		i++;
 	}
 }
@@ -44,6 +52,7 @@ void	ft_parsing_path(t_pipex *pipex, char **envp)
 {
 	char	*path;
 
+	path = NULL;
 	while (envp && *envp)
 	{
 		if (ft_strncmp(*envp, "PATH=", 5) == 0)
@@ -77,7 +86,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	return (pipex);
 }
 
-void	ft_print_pipex(t_pipex *pipex)
+void	ft_print_pipex(t_pipex *pipex) // borrable
 {
 	int	i;
 	int	j;

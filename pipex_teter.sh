@@ -87,11 +87,12 @@ test_pipex() {
 	cmd1=$3
 	cmd2=$4
 	outfile=$5
+	shelloutfile=$5.shell
 
 	ok=true
 
 	delete_files
-	output=$( ( < "$infile" $cmd1 | $cmd2 ) 2> shellerrorfile )
+	output=$( ( < "$infile" $cmd1 | $cmd2 >"$shelloutfile" ) 2> shellerrorfile )
 	cmpstatus=$(echo $?);
 
 	./pipex "$infile" "$cmd1" "$cmd2" "$outfile" 2> errorfile
@@ -146,6 +147,7 @@ test_pipex "3" "infile" "ls ../" "ls ../" "outfile"
 test_pipex "4" "infile" "grep hello" "wc" "outfile"
 test_pipex "5" "noexiste" "grep hello" "wc" "outfile"
 test_pipex "6" "infile" "ls" "ls" "noexiste/noexiste"
+test_pipex "7" "infile" "ls" "ls" "outfile"
 rm -f infile
 echo
 
