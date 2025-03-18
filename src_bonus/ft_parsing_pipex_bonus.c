@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/12/19 23:46:37 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/14 04:19:13 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,21 @@ void	ft_parsing_cmd(char **cmd, char **path_dirs)
 	char	*path;
 
 	i = 0;
+	if (path_dirs == NULL)
+		return ;
 	while (path_dirs[i])
 	{
 		path = ft_strjoin_ae(path_dirs[i], "/");
 		path = ft_strjoin_ae(path, cmd[0]);
 		if (access(path, X_OK) == 0)
+		{
 			cmd[0] = path;
+			return ;
+		}
 		i++;
 	}
+	ft_dprintf(2, "%s: command not found\n", *cmd);
+	cmd[0] = NULL;
 }
 
 void	ft_parsing_cmds(t_pipex *pipex)
@@ -35,7 +42,8 @@ void	ft_parsing_cmds(t_pipex *pipex)
 	i = 0;
 	while (pipex->cmds[i])
 	{
-		ft_parsing_cmd(pipex->cmds[i], pipex->path_dirs);
+		if (ft_strchr(pipex->cmds[i][0], '/') == NULL)
+			ft_parsing_cmd(pipex->cmds[i], pipex->path_dirs);
 		i++;
 	}
 }
@@ -44,6 +52,7 @@ void	ft_parsing_path(t_pipex *pipex, char **envp)
 {
 	char	*path;
 
+	path = NULL;
 	while (envp && *envp)
 	{
 		if (ft_strncmp(*envp, "PATH=", 5) == 0)
@@ -60,7 +69,6 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 {
 	t_pipex	*pipex;
 	int		i_cmd;
-	int		*fds;
 
 	pipex = (t_pipex *)ft_alloc_lst(sizeof(t_pipex), 4);
 	pipex->infile = argv[1];
@@ -69,13 +77,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	i_cmd = 2;
 	while (i_cmd <= argc - 2)
 	{
-		if (i_cmd <= argc)
-		{
-			fds = (int *)ft_alloc_lst(2 * sizeof(int), 4);
-			pipe(fds);
-			ft_lstadd_back(&pipex->pipes_fds, ft_lstnew_a(fds));
-		}
-		pipex->cmds[i_cmd - 2] = ft_split_ae(argv[i_cmd], ' ');
+		pipex->cmds[i_cmd - 2] = ft_split_quotes(argv[i_cmd]);
 		i_cmd++;
 	}
 	pipex->outfile = argv[4];
@@ -84,7 +86,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	return (pipex);
 }
 
-void	ft_print_pipex(t_pipex *pipex)
+void	ft_print_pipex(t_pipex *pipex) // borrable
 {
 	int	i;
 	int	j;

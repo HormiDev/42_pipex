@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2025/03/08 22:38:55 by ide-dieg         ###   ########.fr        #
+#    Updated: 2025/03/17 04:17:18 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,12 @@ SRC =	src/main.c \
 		src/ft_parsing_pipex.c \
 		src/fts_files.c \
 		src/ft_split_quotes.c \
+
+src_bonus = src_bonus/main_bonus.c \
+			src_bonus/ft_execution_bonus.c \
+			src_bonus/ft_parsing_pipex_bonus.c \
+			src_bonus/fts_files_bonus.c \
+			src_bonus/ft_split_quotes_bonus.c \
 
 CC = cc
 
@@ -30,6 +36,14 @@ $(NAME): ide-dieg pipex_title update_submodules build_libft
 	@if [ ! -f $(NAME) ]; then \
 		echo "$(NARANJA)Building $(NAME)...$(NC)"; \
 		$(CC) $(CFLAGS) -o $(NAME) $(SRC) $(LIBSA); \
+		tput cuu1 && tput el; \
+		echo "$(VERDE)$(NAME) built!$(NC)"; \
+	fi
+
+bonus: ide-dieg pipex_title update_submodules build_libft
+	@if [ ! -f $(NAME) ]; then \
+		echo "$(NARANJA)Building $(NAME)...$(NC)"; \
+		$(CC) $(CFLAGS) -o $(NAME) $(src_bonus) $(LIBSA); \
 		tput cuu1 && tput el; \
 		echo "$(VERDE)$(NAME) built!$(NC)"; \
 	fi

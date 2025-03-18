@@ -6,15 +6,33 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2024/12/19 21:50:30 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/14 04:15:33 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_pid_start(t_pipex *pipex, char **envp)
+/**
+ * @brief funcion que hace exit con el error correspondiente
+ * 
+ * EAACCS = 126 - no tiene permisos de ejecucion
+ * EISDIR = 126 - es un directorio
+ * ENOEXEC = 126 - no es un archivo ejecutable o esta corrupto
+ * ETXTBSY = 126 - archivo bloqueado por otro proceso            REVISAR
+ * ENOMEM = 126 - no hay suficiente memoria                      REVISAR
+ * 
+ * 127 - no se encontro el comando
+ */
+void	ft_pid_exit_with_error(void)
 {
-	if (pipex->io_fd[0] < 0)
+	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
+		exit(126);
+	exit(127);
+}
+
+void	ft_pid_1(t_pipex *pipex, char **envp)
+{
+	if (pipex->io_fd[0] < 0 || pipex->cmds[0][0] == NULL)
 		exit(127);
 	dup2(pipex->io_fd[0], 0);
 	dup2(pipex->pipe_fd[1], 1);
@@ -23,13 +41,15 @@ void	ft_pid_start(t_pipex *pipex, char **envp)
 	close(pipex->pipe_fd[1]);
 	execve(pipex->cmds[0][0], pipex->cmds[0], envp);
 	perror(pipex->cmds[0][0]);
-	exit(127);
+	ft_pid_exit_with_error();
 }
 
-void	ft_pid_end(t_pipex *pipex, char **envp)
+void	ft_pid_2(t_pipex *pipex, char **envp)
 {
 	if (pipex->io_fd[1] < 0)
 		exit(1);
+	if (pipex->cmds[1][0] == NULL)
+		exit(127);
 	dup2(pipex->pipe_fd[0], 0);
 	dup2(pipex->io_fd[1], 1);
 	close(pipex->pipe_fd[0]);
@@ -37,7 +57,7 @@ void	ft_pid_end(t_pipex *pipex, char **envp)
 	close(pipex->io_fd[1]);
 	execve(pipex->cmds[1][0], pipex->cmds[1], envp);
 	perror(pipex->cmds[1][0]);
-	exit(127);
+	ft_pid_exit_with_error();
 }
 
 void	ft_wait_pids(pid_t pid1, pid_t pid2)
@@ -46,6 +66,11 @@ void	ft_wait_pids(pid_t pid1, pid_t pid2)
 
 	waitpid(pid1, &last_exit_cmd_status, 0);
 	waitpid(pid2, &last_exit_cmd_status, 0);
+	if (WIFSIGNALED(last_exit_cmd_status))
+	{
+		ft_alloc_lst(0, 0);
+		exit(128 + WTERMSIG(last_exit_cmd_status));
+	}
 	if (WIFEXITED(last_exit_cmd_status))
 	{
 		ft_alloc_lst(0, 0);
