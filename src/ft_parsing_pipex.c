@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/14 04:19:13 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/18 22:27:32 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ void	ft_parsing_cmd(char **cmd, char **path_dirs)
 		}
 		i++;
 	}
-	ft_dprintf(2, "%s: command not found\n", *cmd);
 	cmd[0] = NULL;
 }
 

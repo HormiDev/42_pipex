@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/18 04:39:13 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/19 00:42:16 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@
  */
 void	ft_pid_exit_with_error(void)
 {
-	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
+	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
+		|| errno == ENAMETOOLONG)
 		exit(126);
 	exit(127);
 }
@@ -36,9 +37,15 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 
 	infile = open(pipex->infile, O_RDONLY);
 	if (infile < 0)
+	{
 		perror(pipex->infile);
-	if (infile < 0 || pipex->cmds[0][0] == NULL)
 		exit(127);
+	}
+	if (pipex->cmds[0][0] == NULL)
+	{
+		ft_dprintf(2, "%s: command not found\n", pipex->cmds[0][0]);
+		exit(127);
+	}
 	dup2(infile, 0);
 	dup2(pipex->pipe_fd[1], 1);
 	close(infile);
@@ -60,7 +67,10 @@ void	ft_pid_2(t_pipex *pipex, char **envp)
 		exit(1);
 	}
 	if (pipex->cmds[1][0] == NULL)
+	{
+		ft_dprintf(2, "%s: command not found\n", pipex->cmds[1][0]);
 		exit(127);
+	}
 	dup2(pipex->pipe_fd[0], 0);
 	dup2(outfile, 1);
 	close(pipex->pipe_fd[0]);
