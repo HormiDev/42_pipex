@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/14 04:15:33 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/19 01:03:16 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,37 @@
  * ENOEXEC = 126 - no es un archivo ejecutable o esta corrupto
  * ETXTBSY = 126 - archivo bloqueado por otro proceso            REVISAR
  * ENOMEM = 126 - no hay suficiente memoria                      REVISAR
+ * ENAMETOOLONG = 126 - nombre de archivo demasiado largo
  * 
  * 127 - no se encontro el comando
  */
 void	ft_pid_exit_with_error(void)
 {
-	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC)
+	//dprintf(2, "errno: %d\n", errno);
+	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
+		|| errno == ENAMETOOLONG)
 		exit(126);
 	exit(127);
 }
 
 void	ft_pid_1(t_pipex *pipex, char **envp)
 {
-	if (pipex->io_fd[0] < 0 || pipex->cmds[0][0] == NULL)
+	int infile;
+
+	infile = open(pipex->infile, O_RDONLY);
+	if (infile < 0)
+	{
+		perror(pipex->infile);
 		exit(127);
-	dup2(pipex->io_fd[0], 0);
+	}
+	if (pipex->cmds[0][0] == NULL)
+	{
+		ft_dprintf(2, "%s: command not found\n", pipex->cmds[0][0]);
+		exit(127);
+	}
+	dup2(infile, 0);
 	dup2(pipex->pipe_fd[1], 1);
-	close(pipex->io_fd[0]);
+	close(infile);
 	close(pipex->pipe_fd[0]);
 	close(pipex->pipe_fd[1]);
 	execve(pipex->cmds[0][0], pipex->cmds[0], envp);
@@ -46,15 +60,24 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 
 void	ft_pid_2(t_pipex *pipex, char **envp)
 {
-	if (pipex->io_fd[1] < 0)
+	int outfile;
+
+	outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (outfile < 0)
+	{
+		perror(pipex->outfile);
 		exit(1);
+	}
 	if (pipex->cmds[1][0] == NULL)
+	{
+		ft_dprintf(2, "%s: command not found\n", pipex->cmds[1][0]);
 		exit(127);
+	}
 	dup2(pipex->pipe_fd[0], 0);
-	dup2(pipex->io_fd[1], 1);
+	dup2(outfile, 1);
 	close(pipex->pipe_fd[0]);
 	close(pipex->pipe_fd[1]);
-	close(pipex->io_fd[1]);
+	close(outfile);
 	execve(pipex->cmds[1][0], pipex->cmds[1], envp);
 	perror(pipex->cmds[1][0]);
 	ft_pid_exit_with_error();
@@ -83,7 +106,6 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	pid_t	pid1;
 	pid_t	pid2;
 
-	ft_openfiles(pipex);
 	pipe(pipex->pipe_fd);
 	pid1 = fork();
 	if (pid1 < 0)

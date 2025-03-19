@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2025/03/17 04:17:18 by ide-dieg         ###   ########.fr        #
+#    Updated: 2025/03/19 02:31:18 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,6 +54,8 @@ fclean: fclean_libft
 	@echo "$(NAME) cleaned!"
 
 re: fclean $(NAME)
+
+re_bonus: fclean bonus
 
 build_libft:
 	@if [ ! -f 42_Libft/libft.a ]; then \

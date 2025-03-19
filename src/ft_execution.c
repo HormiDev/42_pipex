@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/19 01:03:16 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/19 02:47:36 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@
  */
 void	ft_pid_exit_with_error(void)
 {
-	//dprintf(2, "errno: %d\n", errno);
 	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
 		|| errno == ENAMETOOLONG)
 		exit(126);
@@ -35,7 +34,7 @@ void	ft_pid_exit_with_error(void)
 
 void	ft_pid_1(t_pipex *pipex, char **envp)
 {
-	int infile;
+	int	infile;
 
 	infile = open(pipex->infile, O_RDONLY);
 	if (infile < 0)
@@ -60,7 +59,7 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 
 void	ft_pid_2(t_pipex *pipex, char **envp)
 {
-	int outfile;
+	int	outfile;
 
 	outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (outfile < 0)
