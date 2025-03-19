@@ -1,37 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_execution.c                                     :+:      :+:    :+:   */
+/*   ft_execution_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/19 01:03:16 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/19 17:03:19 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-/**
- * @brief funcion que hace exit con el error correspondiente
- * 
- * EAACCS = 126 - no tiene permisos de ejecucion
- * EISDIR = 126 - es un directorio
- * ENOEXEC = 126 - no es un archivo ejecutable o esta corrupto
- * ETXTBSY = 126 - archivo bloqueado por otro proceso            REVISAR
- * ENOMEM = 126 - no hay suficiente memoria                      REVISAR
- * ENAMETOOLONG = 126 - nombre de archivo demasiado largo
- * 
- * 127 - no se encontro el comando
- */
-void	ft_pid_exit_with_error(void)
-{
-	//dprintf(2, "errno: %d\n", errno);
-	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
-		|| errno == ENAMETOOLONG)
-		exit(126);
-	exit(127);
-}
 
 void	ft_pid_1(t_pipex *pipex, char **envp)
 {
@@ -106,21 +85,16 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	pid_t	pid1;
 	pid_t	pid2;
 
-	pipe(pipex->pipe_fd);
+	if (pipe(pipex->pipe_fd) < 0)
+		ft_exit_pipe();
 	pid1 = fork();
 	if (pid1 < 0)
-	{
-		ft_putstr_fd("Error al crear el proceso hijo\n", 2);
-		exit(1);
-	}
+		ft_exit_fork();
 	if (pid1 == 0)
 		ft_pid_1(pipex, envp);
 	pid2 = fork();
 	if (pid2 < 0)
-	{
-		ft_putstr_fd("Error al crear el proceso hijo\n", 2);
-		exit(1);
-	}
+		ft_exit_fork();
 	if (pid2 == 0)
 		ft_pid_2(pipex, envp);
 	ft_closefiles(pipex);
