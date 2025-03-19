@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_parsing_pipex.c                                 :+:      :+:    :+:   */
+/*   ft_parsing_pipex_bonus.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/18 22:27:32 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/19 19:42:25 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,32 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	int		i_cmd;
 
 	pipex = (t_pipex *)ft_alloc_lst(sizeof(t_pipex), 4);
-	pipex->infile = argv[1];
-	pipex->cmds = (char ***)ft_alloc_lst((argc - 3) + 1 * sizeof(char **), 4);
-	pipex->n_cmds = argc - 3;
-	i_cmd = 2;
-	while (i_cmd <= argc - 2)
-	{
-		pipex->cmds[i_cmd - 2] = ft_split_quotes(argv[i_cmd]);
-		i_cmd++;
+	if (ft_strncmp_p(argv[1], "here_doc", 9) == 0)
+	{	
+		pipex->infile = ft_read_here_doc(argv[2], &pipex->here_doc);
+		pipex->cmds = (char ***)ft_alloc_lst((argc - 4) + 1 * sizeof(char **), 4);
+		pipex->n_cmds = argc - 4;
+		i_cmd = 3;
+		while (i_cmd <= argc - 2)
+		{
+			pipex->cmds[i_cmd - 3] = ft_split_quotes(argv[i_cmd]);
+			i_cmd++;
+		}
+		pipex->outfile = argv[argc - 1];
 	}
-	pipex->outfile = argv[4];
+	else
+	{
+		pipex->infile = argv[1];
+		pipex->cmds = (char ***)ft_alloc_lst((argc - 3) + 1 * sizeof(char **), 4);
+		pipex->n_cmds = argc - 3;
+		i_cmd = 2;
+		while (i_cmd <= argc - 2)
+		{
+			pipex->cmds[i_cmd - 2] = ft_split_quotes(argv[i_cmd]);
+			i_cmd++;
+		}
+		pipex->outfile = argv[argc - 1];
+	}
 	ft_parsing_path(pipex, envp);
 	ft_parsing_cmds(pipex);
 	return (pipex);
