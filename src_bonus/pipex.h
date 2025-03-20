@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 18:14:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/19 19:44:20 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/20 04:29:05 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,6 @@ char	**ft_split_quotes(char *str);
 void	ft_pid_exit_with_error(void);
 void	ft_exit_fork(void);
 void	ft_exit_pipe(void);
-void	ft_read_here_doc(char *limiter, t_list **here_doc);
+void	ft_here_doc(char *limiter);
 
 #endif
