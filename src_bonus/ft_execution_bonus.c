@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/19 19:12:17 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/22 03:36:47 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,13 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 	if (infile < 0)
 	{
 		perror(pipex->infile);
-		exit(127);
+		ft_alloc_lst(0, 0);
+		exit(1);
 	}
-	if (pipex->cmds[0][0] == NULL)
+	if (ft_strchr(pipex->cmds[0][0], '/') == NULL)
 	{
 		ft_dprintf(2, "%s: command not found\n", pipex->cmds[0][0]);
+		ft_alloc_lst(0, 0);
 		exit(127);
 	}
 	dup2(infile, 0);
@@ -47,7 +49,7 @@ void	ft_pid_2(t_pipex *pipex, char **envp)
 		perror(pipex->outfile);
 		exit(1);
 	}
-	if (pipex->cmds[1][0] == NULL)
+	if (ft_strchr(pipex->cmds[1][0], '/') == NULL)
 	{
 		ft_dprintf(2, "%s: command not found\n", pipex->cmds[1][0]);
 		exit(127);

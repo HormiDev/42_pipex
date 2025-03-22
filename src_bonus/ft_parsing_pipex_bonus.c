@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/20 04:29:34 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/22 02:05:29 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ void	ft_parsing_cmd(char **cmd, char **path_dirs)
 		}
 		i++;
 	}
-	cmd[0] = NULL;
 }
 
 void	ft_parsing_cmds(t_pipex *pipex)
@@ -74,7 +73,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 	{	
 		ft_here_doc(argv[2]);
 		pipex->infile = "/tmp/here_doc";
-		pipex->cmds = (char ***)ft_alloc_lst((argc - 4) + 1 * sizeof(char **), 4);
+		pipex->cmds = (char ***)ft_alloc_lst((argc - 4 + 1) * sizeof(char **), 4);
 		pipex->n_cmds = argc - 4;
 		i_cmd = 3;
 		while (i_cmd <= argc - 2)

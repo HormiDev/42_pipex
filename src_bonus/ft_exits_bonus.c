@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 16:44:37 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/19 19:12:23 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/22 03:36:57 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
  */
 void	ft_pid_exit_with_error(void)
 {
+	ft_alloc_lst(0, 0);
 	if (errno == EACCES || errno == EISDIR || errno == ENOEXEC
 		|| errno == ENAMETOOLONG)
 		exit(126);
