@@ -6,13 +6,13 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/22 03:36:47 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/23 17:07:41 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	ft_pid_1(t_pipex *pipex, char **envp)
+void	ft_first_pid(t_pipex *pipex, char **envp)
 {
 	int infile;
 
@@ -30,20 +30,19 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 		exit(127);
 	}
 	dup2(infile, 0);
-	dup2(pipex->pipe_fd[1], 1);
+	dup2(pipex->pipeline[0][1], 1);
 	close(infile);
-	close(pipex->pipe_fd[0]);
-	close(pipex->pipe_fd[1]);
+	ft_close_pipes(pipex);
 	execve(pipex->cmds[0][0], pipex->cmds[0], envp);
 	perror(pipex->cmds[0][0]);
 	ft_pid_exit_with_error();
 }
 
-void	ft_pid_2(t_pipex *pipex, char **envp)
+void	ft_last_pid(t_pipex *pipex, char **envp)
 {
 	int outfile;
 
-	outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);//agregar cambio de open si el primer argumento es open
 	if (outfile < 0)
 	{
 		perror(pipex->outfile);
@@ -54,22 +53,41 @@ void	ft_pid_2(t_pipex *pipex, char **envp)
 		ft_dprintf(2, "%s: command not found\n", pipex->cmds[1][0]);
 		exit(127);
 	}
-	dup2(pipex->pipe_fd[0], 0);
+	dup2(pipex->pipeline[pipex->n_cmds - 2][0], 0);
 	dup2(outfile, 1);
-	close(pipex->pipe_fd[0]);
-	close(pipex->pipe_fd[1]);
+	ft_close_pipes(pipex);
 	close(outfile);
 	execve(pipex->cmds[1][0], pipex->cmds[1], envp);
 	perror(pipex->cmds[1][0]);
 	ft_pid_exit_with_error();
 }
 
-void	ft_wait_pids(pid_t pid1, pid_t pid2)
+void	ft_middle_pid(t_pipex *pipex, int i, char **envp)
+{
+	if (ft_strchr(pipex->cmds[i][0], '/') == NULL)
+	{
+		ft_dprintf(2, "%s: command not found\n", pipex->cmds[i][0]);
+		exit(127);
+	}
+	dup2(pipex->pipeline[i - 1][0], 0);
+	dup2(pipex->pipeline[i][1], 1);
+	ft_close_pipes(pipex);
+	execve(pipex->cmds[i][0], pipex->cmds[i], envp);
+	perror(pipex->cmds[i][0]);
+	ft_pid_exit_with_error();
+}
+
+void	ft_wait_pids(pid_t *pids)
 {
 	int		last_exit_cmd_status;
+	int		i;
 
-	waitpid(pid1, &last_exit_cmd_status, 0);
-	waitpid(pid2, &last_exit_cmd_status, 0);
+	i = 0;
+	while (pids[i])
+	{
+		waitpid(pids[i], &last_exit_cmd_status, 0);
+		i++;
+	}
 	if (WIFSIGNALED(last_exit_cmd_status))
 	{
 		ft_alloc_lst(0, 0);
@@ -84,21 +102,28 @@ void	ft_wait_pids(pid_t pid1, pid_t pid2)
 
 void	ft_executions(t_pipex *pipex, char **envp)
 {
-	pid_t	pid1;
-	pid_t	pid2;
-
-	if (pipe(pipex->pipe_fd) < 0)
-		ft_exit_pipe();
-	pid1 = fork();
-	if (pid1 < 0)
-		ft_exit_fork();
-	if (pid1 == 0)
-		ft_pid_1(pipex, envp);
-	pid2 = fork();
-	if (pid2 < 0)
-		ft_exit_fork();
-	if (pid2 == 0)
-		ft_pid_2(pipex, envp);
-	ft_closefiles(pipex);
-	ft_wait_pids(pid1, pid2);
+	pid_t	*pids;
+	int 	i;
+	
+	pids = ft_alloc_lst(sizeof(pid_t) * pipex->n_cmds + 1, 4);
+	ft_pipeline(pipex);
+	i = 0;
+	while (i < pipex->n_cmds)
+	{
+		pids[i] = fork();
+		if (pids[i] == -1)
+			ft_exit_fork();//revisar para asegurar espera de forks abiertos y liberar correctamente
+		if (pids[i] == 0)
+		{
+			if (i == 0)
+				ft_first_pid(pipex, envp);
+			else if (i == pipex->n_cmds - 1)
+				ft_last_pid(pipex, envp);
+			else
+				ft_middle_pid(pipex, i, envp);
+		}
+		i++;
+	}
+	ft_close_pipes(pipex);
+	ft_wait_pids(pids);
 }

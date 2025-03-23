@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2025/03/20 03:05:17 by ide-dieg         ###   ########.fr        #
+#    Updated: 2025/03/23 17:09:18 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,10 +22,10 @@ SRC =	src/main.c \
 src_bonus = src_bonus/main_bonus.c \
 			src_bonus/ft_execution_bonus.c \
 			src_bonus/ft_parsing_pipex_bonus.c \
-			src_bonus/fts_files_bonus.c \
 			src_bonus/ft_split_quotes_bonus.c \
 			src_bonus/ft_exits_bonus.c \
 			src_bonus/ft_here_doc_bonus.c \
+			src_bonus/ft_pipeline_bonus.c \
 
 CC = cc
 

@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 18:14:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/20 04:29:05 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/23 16:47:03 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_pipex
 	char	***cmds;
 	char	*outfile;
 	char	**path_dirs;
-	int		pipe_fd[2];
+	int		**pipeline;
 	t_list	*here_doc;
 }	t_pipex;
 
@@ -43,5 +43,7 @@ void	ft_pid_exit_with_error(void);
 void	ft_exit_fork(void);
 void	ft_exit_pipe(void);
 void	ft_here_doc(char *limiter);
+void	ft_pipeline(t_pipex *pipex);
+void	ft_close_pipes(t_pipex *pipex);
 
 #endif
