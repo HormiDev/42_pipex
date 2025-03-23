@@ -6,7 +6,7 @@
 #    By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/04 21:33:00 by ide-dieg          #+#    #+#              #
-#    Updated: 2025/03/23 17:09:18 by ide-dieg         ###   ########.fr        #
+#    Updated: 2025/03/23 20:22:08 by ide-dieg         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRC =	src/main.c \
 		src/ft_split_quotes.c \
 		src/ft_exits.c \
 
-src_bonus = src_bonus/main_bonus.c \
+SRC_BONUS = src_bonus/main_bonus.c \
 			src_bonus/ft_execution_bonus.c \
 			src_bonus/ft_parsing_pipex_bonus.c \
 			src_bonus/ft_split_quotes_bonus.c \
@@ -33,25 +33,40 @@ CFLAGS = -Wall -Wextra -Werror
 
 LIBSA = 42_Libft/libft.a \
 
+OBJDIR = obj
+OBJ = $(SRC:src/%.c=$(OBJDIR)/%.o)
+OBJDIR_BONUS = obj_bonus
+OBJ_BONUS = $(SRC_BONUS:src_bonus/%.c=$(OBJDIR_BONUS)/%.o)
+
 all: $(NAME)
 
-$(NAME): ide-dieg pipex_title update_submodules build_libft
-	@if [ ! -f $(NAME) ]; then \
-		echo "$(NARANJA)Building $(NAME)...$(NC)"; \
-		$(CC) $(CFLAGS) -o $(NAME) $(SRC) $(LIBSA); \
-		tput cuu1 && tput el; \
-		echo "$(VERDE)$(NAME) built!$(NC)"; \
-	fi
+$(OBJDIR)/%.o: src/%.c
+	@mkdir -p $(OBJDIR)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-bonus: ide-dieg pipex_title update_submodules build_libft
-	@if [ ! -f $(NAME) ]; then \
-		echo "$(NARANJA)Building $(NAME)...$(NC)"; \
-		$(CC) $(CFLAGS) -o $(NAME) $(src_bonus) $(LIBSA); \
-		tput cuu1 && tput el; \
-		echo "$(VERDE)$(NAME) built!$(NC)"; \
-	fi
+$(OBJDIR_BONUS)/%.o: src_bonus/%.c
+	@mkdir -p $(OBJDIR_BONUS)
+	@$(CC) $(CFLAGS) -c $< -o $@
 
-fclean: fclean_libft
+$(NAME): ide-dieg pipex_title update_submodules build_libft $(OBJ)
+	@echo "$(NARANJA)Building $(NAME)...$(NC)"
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBSA)
+	@tput cuu1 && tput el
+	@echo "$(VERDE)$(NAME) built!$(NC)"
+
+bonus: ide-dieg pipex_title update_submodules build_libft $(OBJ_BONUS)
+	@echo "$(NARANJA)Building $(NAME)...$(NC)"
+	@$(CC) $(CFLAGS) -o $(NAME) $(OBJ_BONUS) $(LIBSA)
+	@tput cuu1 && tput el
+	@echo "$(VERDE)$(NAME) built!$(NC)"
+
+clean: fclean_libft
+	@echo "Cleaning objects..."
+	@rm -rf $(OBJDIR)
+	@rm -rf $(OBJDIR_BONUS)
+	@echo "Objects cleaned!"
+
+fclean: clean
 	@echo "Cleaning $(NAME)..."
 	@rm -f $(NAME)
 	@echo "$(NAME) cleaned!"

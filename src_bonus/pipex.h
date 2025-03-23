@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 18:14:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/23 16:47:03 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/23 19:19:50 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ typedef struct s_pipex
 	char	*outfile;
 	char	**path_dirs;
 	int		**pipeline;
-	t_list	*here_doc;
+	int		here_doc;
 }	t_pipex;
 
 void	ft_executions(t_pipex *pipex, char **envp);
