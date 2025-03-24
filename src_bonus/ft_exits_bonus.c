@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 16:44:37 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/24 03:01:59 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:12:31 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	ft_pid_exit_with_error(void)
 
 void	ft_exit_fork(pid_t *pids, t_pipex *pipex)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	perror("fork");

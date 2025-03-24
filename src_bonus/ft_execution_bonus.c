@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/24 03:03:49 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:13:29 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_first_pid(t_pipex *pipex, char **envp)
 {
-	int infile;
+	int	infile;
 
 	infile = open(pipex->infile, O_RDONLY);
 	if (infile < 0)
@@ -37,7 +37,7 @@ void	ft_first_pid(t_pipex *pipex, char **envp)
 
 void	ft_last_pid(t_pipex *pipex, int i, char **envp)
 {
-	int outfile;
+	int	outfile;
 
 	if (pipex->here_doc)
 		outfile = open(pipex->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
@@ -75,8 +75,8 @@ void	ft_middle_pid(t_pipex *pipex, int i, char **envp)
 
 void	ft_wait_pids(pid_t *pids, t_pipex *pipex)
 {
-	int		last_exit_cmd_status;
-	int		i;
+	int	last_exit_cmd_status;
+	int	i;
 
 	i = 0;
 	last_exit_cmd_status = 0;
@@ -102,8 +102,8 @@ void	ft_wait_pids(pid_t *pids, t_pipex *pipex)
 void	ft_executions(t_pipex *pipex, char **envp)
 {
 	pid_t	*pids;
-	int 	i;
-	
+	int		i;
+
 	pids = ft_alloc_lst(sizeof(pid_t) * (pipex->n_cmds + 1), 4);
 	ft_pipeline(pipex);
 	i = 0;

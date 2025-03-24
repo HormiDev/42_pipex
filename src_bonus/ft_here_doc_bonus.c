@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/19 19:11:49 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/20 04:28:55 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:12:08 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	ft_read_here_doc(char *limiter, int here_doc_fd)
 
 void	ft_here_doc(char *limiter)
 {
-	int 	here_doc_fd;
+	int	here_doc_fd;
 
 	here_doc_fd = open("/tmp/here_doc", O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (here_doc_fd == -1)
