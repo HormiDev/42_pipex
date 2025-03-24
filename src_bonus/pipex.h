@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 18:14:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/23 19:19:50 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 03:02:25 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,11 @@ void	ft_print_pipex(t_pipex *pipex);
 void	ft_closefiles(t_pipex *pipex);
 char	**ft_split_quotes(char *str);
 void	ft_pid_exit_with_error(void);
-void	ft_exit_fork(void);
+void	ft_exit_fork(pid_t *pids, t_pipex *pipex);
 void	ft_exit_pipe(void);
 void	ft_here_doc(char *limiter);
 void	ft_pipeline(t_pipex *pipex);
 void	ft_close_pipes(t_pipex *pipex);
+void	ft_exit_command_not_found(t_pipex *pipex, int i);
 
 #endif

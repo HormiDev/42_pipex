@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/07 21:57:22 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/23 19:22:50 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 03:29:32 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,24 @@ void	ft_parsing_path(t_pipex *pipex, char **envp)
 	pipex->path_dirs = ft_split_ae(path, ':');
 }
 
+void	ft_parsing_here_doc(t_pipex *pipex, int argc, char **argv)
+{
+	int		i_cmd;
+
+	pipex->here_doc = 1;
+	ft_here_doc(argv[2]);
+	pipex->infile = "/tmp/here_doc";
+	pipex->cmds = (char ***)ft_alloc_lst((argc - 4 + 1) * sizeof(char **), 4);
+	pipex->n_cmds = argc - 4;
+	i_cmd = 3;
+	while (i_cmd <= argc - 2)
+	{
+		pipex->cmds[i_cmd - 3] = ft_split_quotes(argv[i_cmd]);
+		i_cmd++;
+	}
+	pipex->outfile = argv[argc - 1];
+}
+
 t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 {
 	t_pipex	*pipex;
@@ -70,20 +88,7 @@ t_pipex	*ft_parsing_pipex(int argc, char **argv, char **envp)
 
 	pipex = (t_pipex *)ft_alloc_lst(sizeof(t_pipex), 4);
 	if (ft_strncmp_p(argv[1], "here_doc", 9) == 0)
-	{	
-		pipex->here_doc = 1;
-		ft_here_doc(argv[2]);
-		pipex->infile = "/tmp/here_doc";
-		pipex->cmds = (char ***)ft_alloc_lst((argc - 4 + 1) * sizeof(char **), 4);
-		pipex->n_cmds = argc - 4;
-		i_cmd = 3;
-		while (i_cmd <= argc - 2)
-		{
-			pipex->cmds[i_cmd - 3] = ft_split_quotes(argv[i_cmd]);
-			i_cmd++;
-		}
-		pipex->outfile = argv[argc - 1];
-	}
+		ft_parsing_here_doc(pipex, argc, argv);
 	else
 	{
 		pipex->infile = argv[1];

@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/23 19:34:49 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 03:03:49 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,12 @@ void	ft_first_pid(t_pipex *pipex, char **envp)
 	if (infile < 0)
 	{
 		perror(pipex->infile);
+		ft_close_pipes(pipex);
 		ft_alloc_lst(0, 0);
 		exit(1);
 	}
 	if (ft_strchr(pipex->cmds[0][0], '/') == NULL)
-	{
-		ft_dprintf(2, "%s: command not found\n", pipex->cmds[0][0]);
-		ft_alloc_lst(0, 0);
-		exit(127);
-	}
+		ft_exit_command_not_found(pipex, 0);
 	dup2(infile, 0);
 	dup2(pipex->pipeline[0][1], 1);
 	close(infile);
@@ -49,13 +46,12 @@ void	ft_last_pid(t_pipex *pipex, int i, char **envp)
 	if (outfile < 0)
 	{
 		perror(pipex->outfile);
+		ft_close_pipes(pipex);
+		ft_alloc_lst(0, 0);
 		exit(1);
 	}
 	if (ft_strchr(pipex->cmds[i][0], '/') == NULL)
-	{
-		ft_dprintf(2, "%s: command not found\n", pipex->cmds[i][0]);
-		exit(127);
-	}
+		ft_exit_command_not_found(pipex, i);
 	dup2(pipex->pipeline[i - 1][0], 0);
 	dup2(outfile, 1);
 	ft_close_pipes(pipex);
@@ -68,10 +64,7 @@ void	ft_last_pid(t_pipex *pipex, int i, char **envp)
 void	ft_middle_pid(t_pipex *pipex, int i, char **envp)
 {
 	if (ft_strchr(pipex->cmds[i][0], '/') == NULL)
-	{
-		ft_dprintf(2, "%s: command not found\n", pipex->cmds[i][0]);
-		exit(127);
-	}
+		ft_exit_command_not_found(pipex, i);
 	dup2(pipex->pipeline[i - 1][0], 0);
 	dup2(pipex->pipeline[i][1], 1);
 	ft_close_pipes(pipex);
@@ -86,7 +79,8 @@ void	ft_wait_pids(pid_t *pids, t_pipex *pipex)
 	int		i;
 
 	i = 0;
-	while (pids[i])
+	last_exit_cmd_status = 0;
+	while (pids[i] != 0)
 	{
 		waitpid(pids[i], &last_exit_cmd_status, 0);
 		i++;
@@ -110,14 +104,14 @@ void	ft_executions(t_pipex *pipex, char **envp)
 	pid_t	*pids;
 	int 	i;
 	
-	pids = ft_alloc_lst(sizeof(pid_t) * pipex->n_cmds + 1, 4);
+	pids = ft_alloc_lst(sizeof(pid_t) * (pipex->n_cmds + 1), 4);
 	ft_pipeline(pipex);
 	i = 0;
 	while (i < pipex->n_cmds)
 	{
 		pids[i] = fork();
 		if (pids[i] == -1)
-			ft_exit_fork();//revisar para asegurar espera de forks abiertos y liberar correctamente
+			ft_exit_fork(pids, pipex);
 		if (pids[i] == 0)
 		{
 			if (i == 0)
