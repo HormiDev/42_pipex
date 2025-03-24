@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/14 18:46:46 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/22 03:36:36 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/24 19:27:53 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,21 @@ void	ft_pid_1(t_pipex *pipex, char **envp)
 	if (infile < 0)
 	{
 		perror(pipex->infile);
+		ft_closefiles(pipex);
 		ft_alloc_lst(0, 0);
 		exit(1);
 	}
 	if (ft_strchr(pipex->cmds[0][0], '/') == NULL)
 	{
 		ft_dprintf(2, "%s: command not found\n", pipex->cmds[0][0]);
+		ft_closefiles(pipex);
 		ft_alloc_lst(0, 0);
 		exit(127);
 	}
 	dup2(infile, 0);
 	dup2(pipex->pipe_fd[1], 1);
 	close(infile);
-	close(pipex->pipe_fd[0]);
-	close(pipex->pipe_fd[1]);
+	ft_closefiles(pipex);
 	execve(pipex->cmds[0][0], pipex->cmds[0], envp);
 	perror(pipex->cmds[0][0]);
 	ft_pid_exit_with_error();
@@ -47,19 +48,20 @@ void	ft_pid_2(t_pipex *pipex, char **envp)
 	if (outfile < 0)
 	{
 		perror(pipex->outfile);
+		ft_closefiles(pipex);
 		ft_alloc_lst(0, 0);
 		exit(1);
 	}
 	if (ft_strchr(pipex->cmds[1][0], '/') == NULL)
 	{
 		ft_dprintf(2, "%s: command not found\n", pipex->cmds[1][0]);
+		ft_closefiles(pipex);
 		ft_alloc_lst(0, 0);
 		exit(127);
 	}
 	dup2(pipex->pipe_fd[0], 0);
 	dup2(outfile, 1);
-	close(pipex->pipe_fd[0]);
-	close(pipex->pipe_fd[1]);
+	ft_closefiles(pipex);
 	close(outfile);
 	execve(pipex->cmds[1][0], pipex->cmds[1], envp);
 	perror(pipex->cmds[1][0]);
