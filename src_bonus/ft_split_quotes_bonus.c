@@ -6,7 +6,7 @@
 /*   By: ide-dieg <ide-dieg@student.42madrid>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/08 16:20:45 by ide-dieg          #+#    #+#             */
-/*   Updated: 2025/03/19 19:12:39 by ide-dieg         ###   ########.fr       */
+/*   Updated: 2025/03/25 11:43:53 by ide-dieg         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,8 @@ char	**ft_split_quotes(char *str)
 	int		i;
 
 	lst = NULL;
+	if (!*str)
+		ft_lstadd_back(&lst, ft_lstnew_ae(ft_strdup_ae("")));
 	while (*str)
 	{
 		if (*str != ' ' && *str != '\t')
